@@ -1,0 +1,74 @@
+[user]
+	name = <insert full name>
+	email = <insert full email>
+
+[core]
+	editor = code --wait -r
+	ignorecase = false
+
+[alias]
+	myself = !git log --all --author=$(git config --get user.email) --no-merges --pretty=format:'%Cblue%ai%Cred |%w(53,1,28)%Creset%s'
+	clean-all = !git reset --hard && git clean -d -x -f
+	commitn = commit --no-edit
+	co = checkout
+	ci = commit
+	cp = cherry-pick
+	st = status
+	b = branch
+	undo = reset --soft HEAD~1
+	graph = log --graph --branches
+	cleanup = remote prune origin
+	moji = !gitmoji -c
+	re = rebase
+	rei = rebase -i
+	redev = !git fetch && git rebase origin/develop
+	reidev = !git fetch && git rebase -i origin/develop
+	remaster = !git fetch && git rebase origin/master
+	reimaster = !git fetch && git rebase -i origin/master
+	remain = !git fetch && git rebase origin/main
+	reimain = !git fetch && git rebase -i origin/main
+	mergemain = !git fetch && git merge origin/main
+	mt = mergetool
+	cif = commit -am fix
+	amend = commit --amend --no-edit
+	ls = ls-files
+	sha = rev-parse --short HEAD
+	fu = !git add . && git commit --amend --no-edit && git push --force
+	f = fetch
+
+[diff]
+	tool = code
+
+[difftool]
+	prompt = false
+	keepbackup = false
+
+[difftool "code"]
+	cmd = code --wait --diff $LOCAL $REMOTE
+
+[merge]
+	tool = code
+
+[mergetool]
+	keepbackup = false
+	prompt = false
+
+[mergetool "code"]
+	cmd = code --wait $MERGED
+
+[push]
+	default = current
+	followTags = true
+	autoSetupRemote = true
+
+[pull]
+	ff = only
+
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	
+[init]
+	defaultBranch = main
