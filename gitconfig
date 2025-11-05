@@ -2,9 +2,13 @@
 	name = <insert full name>
 	email = <insert full email>
 
+
 [core]
-	editor = code --wait -r
+	editor = nvim -f
 	ignorecase = false
+	eol = lf
+	autocrlf = input
+	excludesFile = ~/.gitignore
 
 [alias]
 	myself = !git log --all --author=$(git config --get user.email) --no-merges --pretty=format:'%Cblue%ai%Cred |%w(53,1,28)%Creset%s'
@@ -15,46 +19,67 @@
 	cp = cherry-pick
 	st = status
 	b = branch
+	delete-remote = push origin -d
 	undo = reset --soft HEAD~1
-	graph = log --graph --branches
+	graph = log --graph --branches --tags
+	# graph = log --graph --decorate --oneline --all
 	cleanup = remote prune origin
 	moji = !gitmoji -c
 	re = rebase
 	rei = rebase -i
-	redev = !git fetch && git rebase origin/develop
-	reidev = !git fetch && git rebase -i origin/develop
-	remaster = !git fetch && git rebase origin/master
-	reimaster = !git fetch && git rebase -i origin/master
+	redev = !git fetch && git rebase origin/dev
+	reidev = !git fetch && git rebase -i origin/dev
 	remain = !git fetch && git rebase origin/main
 	reimain = !git fetch && git rebase -i origin/main
 	mergemain = !git fetch && git merge origin/main
 	mt = mergetool
 	cif = commit -am fix
 	amend = commit --amend --no-edit
+	reword = commit --amend
 	ls = ls-files
 	sha = rev-parse --short HEAD
 	fu = !git add . && git commit --amend --no-edit && git push --force
 	f = fetch
+	cp-space = cherry-pick -X ignore-all-space
+	feature = !sh -c 'git checkout -b feature/$1' -
+	all = add -A
+	pull-all = "!f() { for dir in $(find . -name .git -type d -exec dirname {} \\;); do echo \"Pulling $dir\"; (cd \"$dir\" && git pull); done; }; f"
+	tags = tag -l
+	bump = !git-bump
+	lazy = !lazygit
+	cv="!git describe --tags --always | { read -r out; printf '%s' \"$out\" | pbcopy; echo \"$out\"; }"
 
 [diff]
-	tool = code
+	tool = nvim
 
 [difftool]
 	prompt = false
 	keepbackup = false
 
+[difftool "nvim"]
+  cmd = nvim -d -o $LOCAL
+
 [difftool "code"]
 	cmd = code --wait --diff $LOCAL $REMOTE
 
+[difftool "cursor"]
+	cmd = cursor --wait --diff $LOCAL $REMOTE
+
 [merge]
-	tool = code
+	tool = nvim
 
 [mergetool]
 	keepbackup = false
 	prompt = false
 
+[mergetool "nvim"]
+  cmd = nvim -d -o $LOCAL $MERGED $REMOTE
+
 [mergetool "code"]
-	cmd = code --wait $MERGED
+  cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
+
+[mergetool "cursor"]
+  cmd = cursor --wait --merge $REMOTE $LOCAL $BASE $MERGED
 
 [push]
 	default = current
@@ -69,6 +94,11 @@
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
-	
+
 [init]
 	defaultBranch = main
+
+[fetch]
+	prune = true
+[advice]
+	forceDeleteBranch = false
